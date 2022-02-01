@@ -4,6 +4,7 @@
 .routify/
 android/
 ios/
+tauri/
 
 package-lock.json
 .env

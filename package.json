@@ -39,6 +39,8 @@
     "vite-tsconfig-paths": "^3.3.10"
   },
   "dependencies": {
+    "@capacitor-community/electron": "^4.1.0",
+    "@capacitor-community/tauri": "^1.0.0-alpha.12",
     "@capacitor/android": "^3.0.1",
     "@capacitor/cli": "^3.0.0",
     "@capacitor/core": "^3.0.0",

@@ -1,6 +1,6 @@
 {
   "appId": "com.svelte.capacitor",
-  "appName": "Svelte Capacitor",
+  "appName": "Multiempo",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "public",
