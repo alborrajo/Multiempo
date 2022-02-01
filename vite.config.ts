@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { getAliases } from "vite-aliases";
+import autoPreprocess from 'svelte-preprocess';
 
 const aliases = getAliases();
 
@@ -10,6 +11,7 @@ export default defineConfig({
   plugins: [
     // Compile Web Components
     svelte({
+      preprocess: autoPreprocess(),
       // @ts-ignore
       include: /\.wc\.svelte$/,
       compilerOptions: {
@@ -18,6 +20,7 @@ export default defineConfig({
     }),
     // Compile Normal Svelte
     svelte({
+      preprocess: autoPreprocess(),
       // @ts-ignore
       exclude: /\.wc\.svelte$/,
       compilerOptions: {
