@@ -1,6 +1,6 @@
 <script lang="ts">
+    import type { TimerEntity } from "@entities/TimerEntity";
     import Timer from "@components/Timer.svelte";
-    import { TimerEntity } from "@entities/TimerEntity";
     import { onMount } from "svelte";
 
     const STORAGE_TIMERS_KEY = "timers";
@@ -27,7 +27,7 @@
 
     function addTimer() {
         console.log("New timer", addName);
-        timers = [...timers, new TimerEntity(addName, 0)];
+        timers = [...timers, {name: addName, time: 0}];
         addModal.dismiss();
         addName = '';
         saveState();
