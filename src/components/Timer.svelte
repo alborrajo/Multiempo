@@ -7,6 +7,8 @@
     const dispatch = createEventDispatcher();
     
     export let timer: TimerEntity;
+
+    let ionItemSliding: HTMLIonItemSlidingElement;
     
     let running: boolean = false;
     
@@ -35,6 +37,11 @@
         dispatch('tick', timer);
     }
 
+    function openMenu(event: CustomEvent) {
+        ionItemSliding.open('end');
+        event.preventDefault();
+    }
+
     function remove() {
         stop();
         dispatch('remove', timer);
@@ -45,8 +52,8 @@
     dayjs.extend(duration);
 </script>
 
-<ion-item-sliding>
-    <ion-item>
+<ion-item-sliding bind:this="{ionItemSliding}">
+    <ion-item on:contextmenu="{openMenu}">
         <ion-avatar slot="start">
             <ion-button color="{running ? 'secondary' : 'primary'}" shape="round" size="small" on:click={toggle}>
                 <ion-icon name="{running ? 'stop' : 'play'}" />

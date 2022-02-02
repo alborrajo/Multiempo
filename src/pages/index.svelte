@@ -5,8 +5,7 @@
 
     const STORAGE_TIMERS_KEY = "timers";
 
-    let addModal;
-    let addModalInput;
+    let timerList: HTMLIonListElement;
 
     onMount(async () => {
         addModal = document.getElementById("add-modal") as HTMLIonModalElement;
@@ -50,6 +49,10 @@
         }
     }
 
+    function closeListMenus(event: Event) {
+        timerList.closeSlidingItems();
+    }
+
     loadState();
 </script>
 
@@ -60,8 +63,8 @@
         </ion-toolbar>
     </ion-header>
 
-    <ion-content>
-        <ion-list>
+    <ion-content on:click="{closeListMenus}">
+        <ion-list bind:this="{timerList}">
             <ion-reorder-group disabled="true">
                 {#each timers as timer}
                     <Timer {timer} on:tick={saveState} on:remove={removeTimer}/>
