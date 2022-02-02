@@ -7,10 +7,10 @@
 
     let timerList: HTMLIonListElement;
 
-    onMount(async () => {
-        addModal = document.getElementById("add-modal") as HTMLIonModalElement;
-        addModalInput = document.getElementById("add-modal-input") as HTMLIonInputElement;
+    let addModal: HTMLIonModalElement;
+    let addModalInput: HTMLIonInputElement;
 
+    onMount(async () => {
         addModal.initialBreakpoint = 0.25;
         addModal.breakpoints = [0, 0.25];
     });
@@ -24,12 +24,13 @@
         addModalInput.setFocus();
     }
 
-    function addTimer() {
+    function addTimer(event: SubmitEvent) {
         console.log("New timer", addName);
         timers = [...timers, {name: addName, time: 0}];
         addModal.dismiss();
         addName = '';
         saveState();
+        event.preventDefault();
     }
 
     function removeTimer(event: CustomEvent) {
@@ -80,7 +81,7 @@
     </ion-content>
 
     <!-- Add modal -->
-    <ion-modal id="add-modal">
+    <ion-modal bind:this="{addModal}">
         <ion-header>
             <ion-toolbar>
                 <ion-title>Add Timer</ion-title>
@@ -88,15 +89,17 @@
         </ion-header>
 
         <ion-content>
-            <ion-item>
-                <ion-label position="floating">Name</ion-label>
-                <ion-input id="add-modal-input" value={addName} on:ionChange={changeEvt => addName = changeEvt.detail.value}></ion-input>
-                <ion-avatar slot="end">
-                    <ion-button color="primary" size="small" shape="round" disabled={addName==''} on:click={addTimer}>
-                        <ion-icon slot="icon-only" name="add"></ion-icon>
-                    </ion-button>
-                </ion-avatar>
-            </ion-item>
+            <form on:submit="{addTimer}">
+                <ion-item>
+                    <ion-label position="floating">Name</ion-label>
+                    <ion-input bind:this="{addModalInput}" required value={addName} on:ionChange={changeEvt => addName = changeEvt.detail.value}></ion-input>
+                    <ion-avatar slot="end">
+                        <ion-button type="submit" color="primary" size="small" shape="round" disabled={addName==''}>
+                            <ion-icon slot="icon-only" name="add"></ion-icon>
+                        </ion-button>
+                    </ion-avatar>
+                </ion-item>
+            </form>
         </ion-content>
       </ion-modal>
 </ion-app>
