@@ -1,5 +1,5 @@
 {
-  "appId": "com.svelte.capacitor",
+  "appId": "alborrajo.multiempo",
   "appName": "Multiempo",
   "bundledWebRuntime": false,
   "npmClient": "npm",

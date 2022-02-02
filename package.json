@@ -1,6 +1,6 @@
 {
-  "name": "svelte_capacitor",
-  "version": "2.0.0",
+  "name": "multiempo",
+  "version": "0.1.0",
   "scripts": {
     "#Build: Core": "Thesee scripts build the core application (routing logic, and views)",
     "build:app": "routify -b && vite build",
