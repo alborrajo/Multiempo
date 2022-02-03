@@ -1,8 +1,8 @@
 <script lang="ts">
-    import * as dayjs from 'dayjs'
-    import duration from 'dayjs/plugin/duration';
     import type { TimerEntity } from 'src/entities/TimerEntity';
     import { createEventDispatcher, onDestroy } from 'svelte';
+    import dayjs from 'dayjs'
+    import duration from 'dayjs/plugin/duration';
 
     const dispatch = createEventDispatcher();
     
@@ -14,10 +14,14 @@
     
     let intervalId: number;
     
-    function toggle() {
-        running = !running;
-        
-        if(running) {
+    let lastTickTime: number;
+
+    onDestroy(() => {
+        stop();
+    });
+
+    function toggle() {        
+        if(!running) {
             play();
         } else {
             stop();
@@ -25,15 +29,23 @@
     }
 
     function play() {
+        running = true;
         intervalId = setInterval(tick, 1000);
+        lastTickTime = Date.now();
     }
 
     function stop() {
+        running = false;
         clearInterval(intervalId);
+        lastTickTime = null;
     }
     
     function tick() {
-        timer.time++;
+        // In case a second happens to be longer than 1 second
+        // (App is suspended, for example)
+        const now = Date.now();
+        timer.time += (now - lastTickTime) / 1000;
+        lastTickTime = now;
         dispatch('tick', timer);
     }
 
@@ -46,8 +58,6 @@
         stop();
         dispatch('remove', timer);
     }
-
-    onDestroy(stop);
 
     dayjs.extend(duration);
 </script>
