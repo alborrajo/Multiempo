@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Multiempo</string>
+    <string name="title_activity_main">Multiempo</string>
+    <string name="package_name">alborrajo.multiempo</string>
+    <string name="custom_url_scheme">alborrajo.multiempo</string>
+</resources>
