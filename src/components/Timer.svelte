@@ -97,6 +97,11 @@
         dispatch('tick', timer);
     }
 
+    function updateDescription(event: Event) {
+        timer.description = (event.currentTarget as HTMLIonTextareaElement).value as string;
+        dispatch('tick', timer);
+    }
+
     dayjs.extend(duration);
 </script>
 
@@ -142,9 +147,14 @@
         </ion-header>
 
         <ion-content>
-            <ion-label class="ion-text-center fullheight xc">
-                <h1 on:click="{pickTime}">{ dayjs.duration(timer.time, 'seconds').format('HH:mm:ss') }</h1>
-            </ion-label>
+            <div class="ion-text-center fullheight xc">
+                <ion-label>
+                    <h1 on:click="{pickTime}">{ dayjs.duration(timer.time, 'seconds').format('HH:mm:ss') }</h1>
+                </ion-label>
+                <ion-item>
+                    <ion-textarea auto-grow="true" placeholder="Description" value="{ timer.description }" class="ion-text-center" on:ionChange="{updateDescription}"></ion-textarea>
+                </ion-item>
+            </div>
         </ion-content>
 
         <ion-footer class="ion-no-border">
@@ -172,7 +182,8 @@
 
     .xc {
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        align-items: stretch;
         justify-content: center;
     }
 </style>
