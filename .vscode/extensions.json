@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "svelte.svelte-vscode",
+        "dbaeumer.vscode-eslint",
+        "jordaneldredge.implicit-parentheses",
+        "eg2.vscode-npm-script",
+        "christian-kohler.npm-intellisense",
+        "firefox-devtools.vscode-firefox-debug"
+    ]
+}
