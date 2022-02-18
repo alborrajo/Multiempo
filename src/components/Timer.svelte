@@ -73,7 +73,7 @@
         detailsModal.present();
     }
 
-    function pickTime(event) {
+    function pickTime(event: Event) {
         const range0toHours = [...Array(Math.max(100, Math.ceil(timer.time/3600))).keys()].map(n => {return {text: n.toString(), value: n}});
         const range0to60Minutes = [...Array(60).keys()].map(n => {return {text: n.toString(), value: n}});
         const range0to60Seconds = [...Array(60).keys()].map(n => {return {text: n.toString(), value: n}});
@@ -90,6 +90,11 @@
                 }}
             ],
         }).then(picker => picker.present());
+    }
+
+    function updateName(event: Event) {
+        timer.name = (event.currentTarget as HTMLIonInputElement).value as string;
+        dispatch('tick', timer);
     }
 
     dayjs.extend(duration);
@@ -125,7 +130,9 @@
                         <ion-icon slot="icon-only" name="close"></ion-icon>
                     </ion-button>
                 </ion-buttons>
-                <ion-title>{ timer.name }</ion-title>
+                <ion-title>
+                    <ion-input value="{ timer.name }" on:ionChange="{updateName}"></ion-input>
+                </ion-title>
                 <ion-buttons slot="end">
                     <ion-button color="danger" on:click={remove}>
                         <ion-icon slot="icon-only" name="trash-bin"></ion-icon>
@@ -135,7 +142,7 @@
         </ion-header>
 
         <ion-content>
-            <ion-label class="ion-text-center fullheight xc" >
+            <ion-label class="ion-text-center fullheight xc">
                 <h1 on:click="{pickTime}">{ dayjs.duration(timer.time, 'seconds').format('HH:mm:ss') }</h1>
             </ion-label>
         </ion-content>
@@ -143,11 +150,15 @@
         <ion-footer class="ion-no-border">
             <ion-toolbar>
                 <ion-buttons class="ion-justify-content-center">
-                    <ion-button color="tertiary" shape="round" on:click="{() => addSeconds(60)}">+1m</ion-button>
+                    <ion-button color="tertiary" shape="round" class="ion-text-capitalize" on:click="{() => addSeconds(60)}">
+                        + 1m
+                    </ion-button>
                     <ion-button color="{running ? 'secondary' : 'primary'}" fill="outline" shape="round" size="large" on:click={toggle}>
                         <ion-icon name="{running ? 'stop' : 'play'}" />
                     </ion-button>
-                    <ion-button color="tertiary" shape="round" on:click="{() => addSeconds(600)}">+10m</ion-button>
+                    <ion-button color="tertiary" shape="round" class="ion-text-capitalize" on:click="{() => addSeconds(600)}">
+                        +10m
+                    </ion-button>
                 </ion-buttons>
             </ion-toolbar>
           </ion-footer>
