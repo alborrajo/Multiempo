@@ -53,6 +53,11 @@
         dispatch('tick', timer);
     }
 
+    function addSeconds(seconds: number) {
+        timer.time += seconds;
+        dispatch('tick', timer);
+    }
+
     function openMenu(event: CustomEvent) {
         ionItemSliding.open('end');
         event.preventDefault();
@@ -138,9 +143,11 @@
         <ion-footer class="ion-no-border">
             <ion-toolbar>
                 <ion-buttons class="ion-justify-content-center">
-                    <ion-button color="{running ? 'secondary' : 'primary'}" shape="round" size="large" on:click={toggle}>
+                    <ion-button color="tertiary" shape="round" on:click="{() => addSeconds(60)}">+1m</ion-button>
+                    <ion-button color="{running ? 'secondary' : 'primary'}" fill="outline" shape="round" size="large" on:click={toggle}>
                         <ion-icon name="{running ? 'stop' : 'play'}" />
                     </ion-button>
+                    <ion-button color="tertiary" shape="round" on:click="{() => addSeconds(600)}">+10m</ion-button>
                 </ion-buttons>
             </ion-toolbar>
           </ion-footer>
