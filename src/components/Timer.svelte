@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { TimerEntity } from 'src/entities/TimerEntity';
-    import { createEventDispatcher, onDestroy } from 'svelte';
-    import { PickerColumn, pickerController } from '@ionic/core';
+    import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+    import { pickerController } from '@ionic/core';
     import dayjs from 'dayjs'
     import duration from 'dayjs/plugin/duration';
 
@@ -12,44 +12,51 @@
     let ionItemSliding: HTMLIonItemSlidingElement;
     
     let detailsModal: HTMLIonModalElement;
-
-    let running: boolean = false;
     
     let intervalId: number;
-    
-    let lastTickTime: number;
+
+    onMount(() => {
+        setRunning(timer._running);
+    })
 
     onDestroy(() => {
         stop();
     });
 
-    function toggle(event: Event) {        
-        if(!running) {
+    function toggle(event: Event) {  
+        setRunning(!timer._running);
+        event.stopPropagation();
+    }
+
+    function setRunning(running: boolean) {
+        if(running) {
             play();
         } else {
             stop();
         }
-        event.stopPropagation();
     }
 
     function play() {
-        running = true;
+        timer._running = true;
         intervalId = setInterval(tick, 1000);
-        lastTickTime = Date.now();
+        tick();
     }
 
     function stop() {
-        running = false;
+        timer._running = false;
         clearInterval(intervalId);
-        lastTickTime = null;
     }
     
     function tick() {
         // In case a second happens to be longer than 1 second
         // (App is suspended, for example)
         const now = Date.now();
-        timer.time += (now - lastTickTime) / 1000;
-        lastTickTime = now;
+
+        if(timer._lastTickTime != null) {
+            timer.time += (now - timer._lastTickTime) / 1000;
+        }
+
+        timer._lastTickTime = now;
         dispatch('tick', timer);
     }
 
@@ -108,8 +115,8 @@
 <ion-item-sliding bind:this="{ionItemSliding}" on:click="{openModal}">
     <ion-item on:contextmenu="{openMenu}">
         <ion-avatar slot="start">
-            <ion-button color="{running ? 'secondary' : 'primary'}" shape="round" size="small" on:click={toggle}>
-                <ion-icon name="{running ? 'stop' : 'play'}" />
+            <ion-button color="{timer._running ? 'secondary' : 'primary'}" shape="round" size="small" on:click={toggle}>
+                <ion-icon name="{timer._running ? 'stop' : 'play'}" />
             </ion-button>
         </ion-avatar>
         <ion-label>
@@ -163,8 +170,8 @@
                     <ion-button color="tertiary" shape="round" class="ion-text-capitalize" on:click="{() => addSeconds(60)}">
                         + 1m
                     </ion-button>
-                    <ion-button color="{running ? 'secondary' : 'primary'}" fill="outline" shape="round" size="large" on:click={toggle}>
-                        <ion-icon name="{running ? 'stop' : 'play'}" />
+                    <ion-button color="{timer._running ? 'secondary' : 'primary'}" fill="outline" shape="round" size="large" on:click={toggle}>
+                        <ion-icon name="{timer._running ? 'stop' : 'play'}" />
                     </ion-button>
                     <ion-button color="tertiary" shape="round" class="ion-text-capitalize" on:click="{() => addSeconds(600)}">
                         +10m
