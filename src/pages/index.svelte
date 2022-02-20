@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { TimerEntity } from "@entities/TimerEntity";
+    import { Storage } from '@capacitor/storage';
     import Timer from "@components/Timer.svelte";
     import { onMount } from "svelte";
 
@@ -13,9 +14,11 @@
     onMount(async () => {
         addModal.initialBreakpoint = 0.25;
         addModal.breakpoints = [0, 0.25];
+
+        loadState();
     });
 
-    let timers: Array<TimerEntity>;
+    let timers: Array<TimerEntity> = [];
 
     let addName='';
 
@@ -39,12 +42,15 @@
         saveState();
     }
 
-    function saveState() {
-        localStorage.setItem(STORAGE_TIMERS_KEY, JSON.stringify(timers));
+    async function saveState() {
+        await Storage.set({
+            key: STORAGE_TIMERS_KEY,
+            value: JSON.stringify(timers)
+        });
     }
 
-    function loadState() {
-        timers = JSON.parse(localStorage.getItem(STORAGE_TIMERS_KEY));
+    async function loadState() {
+        timers = JSON.parse((await Storage.get({key: STORAGE_TIMERS_KEY})).value);
         if(timers == null) {
             timers = [];
         }
@@ -53,8 +59,6 @@
     function closeListMenus(event: Event) {
         timerList.closeSlidingItems();
     }
-
-    loadState();
 </script>
 
 <ion-app>
