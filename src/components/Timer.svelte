@@ -24,6 +24,7 @@
     });
 
     function toggle(event: Event) {  
+        timer._lastTickTime = null;
         setRunning(!timer._running);
         event.stopPropagation();
     }
