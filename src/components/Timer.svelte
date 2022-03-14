@@ -2,6 +2,7 @@
     import type { TimerEntity } from 'src/entities/TimerEntity';
     import { createEventDispatcher, onDestroy, onMount } from 'svelte';
     import { pickerController } from '@ionic/core';
+    import { Platforms, isPlatform } from '@ionic/core';
     import dayjs from 'dayjs'
     import duration from 'dayjs/plugin/duration';
 
@@ -16,7 +17,13 @@
     let intervalId: number;
 
     onMount(() => {
-        setRunning(timer._running);
+        // Don't keep counting when the app is closed on PC
+        console.log()
+        if(isPlatform("mobile")) {
+            setRunning(timer._running);
+        } else {
+            setRunning(false);
+        }
     })
 
     onDestroy(() => {
