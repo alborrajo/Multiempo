@@ -3,6 +3,7 @@
     import { Storage } from '@capacitor/storage';
     import Timer from "@components/Timer.svelte";
     import { onMount } from "svelte";
+import type { ItemReorderCustomEvent, ItemReorderEventDetail } from "@ionic/core";
 
     const STORAGE_TIMERS_KEY = "timers";
 
@@ -59,6 +60,14 @@
     function closeListMenus(event: Event) {
         timerList.closeSlidingItems();
     }
+
+    function doReorder(event: ItemReorderCustomEvent) {
+        const movedElement = timers[event.detail.from];
+        timers.splice(event.detail.from, 1);
+        $: timers.splice(event.detail.to, 0, movedElement);
+        event.detail.complete();
+        saveState();
+    }
 </script>
 
 <ion-app>
@@ -70,7 +79,7 @@
 
     <ion-content on:click="{closeListMenus}">
         <ion-list bind:this="{timerList}">
-            <ion-reorder-group disabled="true">
+            <ion-reorder-group disabled="false" on:ionItemReorder={doReorder}>
                 {#each timers as timer}
                     <Timer {timer} on:tick={saveState} on:remove={removeTimer}/>
                 {/each}
