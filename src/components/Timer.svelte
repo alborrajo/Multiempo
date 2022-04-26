@@ -69,7 +69,7 @@
     }
 
     function addSeconds(seconds: number) {
-        timer.time += seconds;
+        timer.time = Math.max(0, timer.time + seconds);
         dispatch('tick', timer);
     }
 
@@ -175,11 +175,17 @@
         <ion-footer class="ion-no-border">
             <ion-toolbar>
                 <ion-buttons class="ion-justify-content-center">
-                    <ion-button color="tertiary" shape="round" class="ion-text-capitalize" on:click="{() => addSeconds(60)}">
-                        + 1m
+                    <ion-button color="danger" shape="round" class="ion-text-capitalize" on:click="{() => addSeconds(-60)}">
+                        - 1m
+                    </ion-button>
+                    <ion-button color="danger" shape="round" class="ion-text-capitalize" on:click="{() => addSeconds(-600)}">
+                        -10m
                     </ion-button>
                     <ion-button color="{timer._running ? 'secondary' : 'primary'}" fill="outline" shape="round" size="large" on:click={toggle}>
                         <ion-icon name="{timer._running ? 'stop' : 'play'}" />
+                    </ion-button>
+                    <ion-button color="tertiary" shape="round" class="ion-text-capitalize" on:click="{() => addSeconds(60)}">
+                        + 1m
                     </ion-button>
                     <ion-button color="tertiary" shape="round" class="ion-text-capitalize" on:click="{() => addSeconds(600)}">
                         +10m
