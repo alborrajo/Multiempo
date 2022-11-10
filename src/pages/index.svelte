@@ -1,9 +1,9 @@
 <script lang="ts">
+    import type { ItemReorderCustomEvent, ItemReorderEventDetail } from "@ionic/core";
     import type { TimerEntity } from "@entities/TimerEntity";
     import { Storage } from '@capacitor/storage';
     import Timer from "@components/Timer.svelte";
     import { onMount } from "svelte";
-import type { ItemReorderCustomEvent, ItemReorderEventDetail } from "@ionic/core";
 
     const STORAGE_TIMERS_KEY = "timers";
 
@@ -30,7 +30,8 @@ import type { ItemReorderCustomEvent, ItemReorderEventDetail } from "@ionic/core
 
     function addTimer(event: SubmitEvent) {
         console.log("New timer", addName);
-        timers = [...timers, {name: addName, time: 0}];
+        timers.push({name: addName, time: 0});
+        timers = timers; // Force reaction
         addModal.dismiss();
         addName = '';
         saveState();
@@ -51,10 +52,7 @@ import type { ItemReorderCustomEvent, ItemReorderEventDetail } from "@ionic/core
     }
 
     async function loadState() {
-        timers = JSON.parse((await Storage.get({key: STORAGE_TIMERS_KEY})).value);
-        if(timers == null) {
-            timers = [];
-        }
+        timers = JSON.parse((await Storage.get({key: STORAGE_TIMERS_KEY})).value) ?? [];
     }
 
     function closeListMenus(event: Event) {
@@ -64,7 +62,8 @@ import type { ItemReorderCustomEvent, ItemReorderEventDetail } from "@ionic/core
     function doReorder(event: ItemReorderCustomEvent) {
         const movedElement = timers[event.detail.from];
         timers.splice(event.detail.from, 1);
-        $: timers.splice(event.detail.to, 0, movedElement);
+        timers.splice(event.detail.to, 0, movedElement);
+        timers = timers; // Force reaction
         event.detail.complete();
         saveState();
     }
