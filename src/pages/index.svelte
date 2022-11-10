@@ -63,7 +63,6 @@
         const movedElement = timers[event.detail.from];
         timers.splice(event.detail.from, 1);
         timers.splice(event.detail.to, 0, movedElement);
-        timers = timers; // Force reaction
         event.detail.complete();
         saveState();
     }
