@@ -2,7 +2,7 @@
     import type { TimerEntity } from "src/entities/TimerEntity";
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { alertController, pickerController } from "@ionic/core";
-    import { Platforms, isPlatform } from "@ionic/core";
+    import { isPlatform } from "@ionic/core";
     import dayjs from "dayjs";
     import duration from "dayjs/plugin/duration";
 
@@ -18,7 +18,6 @@
 
     onMount(() => {
         // Don't keep counting when the app is closed on PC
-        console.log();
         if (isPlatform("mobile")) {
             setRunning(timer._running);
         } else {

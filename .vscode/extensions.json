@@ -5,6 +5,18 @@
         "jordaneldredge.implicit-parentheses",
         "eg2.vscode-npm-script",
         "christian-kohler.npm-intellisense",
-        "firefox-devtools.vscode-firefox-debug"
+        "firefox-devtools.vscode-firefox-debug",
+        "alborrajo.codingstreak",
+        "usernamehw.errorlens",
+        "eamodio.gitlens",
+        "oderwat.indent-rainbow",
+        "visualstudioexptteam.vscodeintellicode",
+        "visualstudioexptteam.intellicode-api-usage-examples",
+        "visualstudioexptteam.vscodeintellicode-completions",
+        "wayou.vscode-todo-highlight",
+        "cweijan.vscode-typora",
+        "wmaurer.change-case",
+        "yo1dog.cursor-align",
+        "softwareape.numbermonger"
     ]
 }

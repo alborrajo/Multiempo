@@ -1,70 +1,34 @@
 <script lang="ts">
-    import type { ItemReorderCustomEvent, ItemReorderEventDetail } from "@ionic/core";
-    import type { TimerEntity } from "@entities/TimerEntity";
-    import { Storage } from '@capacitor/storage';
-    import Timer from "@components/Timer.svelte";
+    import TimerList from "@components/TimerList.svelte";
     import { onMount } from "svelte";
+    import { addTimer } from "@store/timers";
 
-    const STORAGE_TIMERS_KEY = "timers";
-
-    let timerList: HTMLIonListElement;
-
+    var timerList: HTMLIonListElement;
+    
     let addModal: HTMLIonModalElement;
     let addModalInput: HTMLIonInputElement;
-
-    onMount(async () => {
+    
+    onMount(() => {
         addModal.initialBreakpoint = 0.25;
         addModal.breakpoints = [0, 0.25];
-
-        loadState();
     });
-
-    let timers: Array<TimerEntity> = [];
-
+    
     let addName='';
-
+    
+    function closeListMenus(_event: Event) {
+        timerList.closeSlidingItems();
+    }
+    
     function openAddModal() {
         addModal.present();
         addModalInput.setFocus();
     }
-
-    function addTimer(event: SubmitEvent) {
-        console.log("New timer", addName);
-        timers.push({name: addName, time: 0});
-        timers = timers; // Force reaction
+    
+    function addTimerEventHandler(event: SubmitEvent) {
+        addTimer(addName);
         addModal.dismiss();
         addName = '';
-        saveState();
         event.preventDefault();
-    }
-
-    function removeTimer(event: CustomEvent) {
-        console.log(event.detail);
-        timers = timers.filter(timer => timer != event.detail);
-        saveState();
-    }
-
-    async function saveState() {
-        await Storage.set({
-            key: STORAGE_TIMERS_KEY,
-            value: JSON.stringify(timers)
-        });
-    }
-
-    async function loadState() {
-        timers = JSON.parse((await Storage.get({key: STORAGE_TIMERS_KEY})).value) ?? [];
-    }
-
-    function closeListMenus(event: Event) {
-        timerList.closeSlidingItems();
-    }
-
-    function doReorder(event: ItemReorderCustomEvent) {
-        const movedElement = timers[event.detail.from];
-        timers.splice(event.detail.from, 1);
-        timers.splice(event.detail.to, 0, movedElement);
-        event.detail.complete();
-        saveState();
     }
 </script>
 
@@ -72,25 +36,26 @@
     <ion-header>
         <ion-toolbar>
             <ion-title>Multiempo</ion-title>
+            <ion-buttons slot="primary">
+                <ion-button href="/archive">
+                    <ion-icon slot="icon-only" name="archive" />
+                </ion-button>
+            </ion-buttons>
         </ion-toolbar>
     </ion-header>
-
-    <ion-content on:click="{closeListMenus}">
-        <ion-list bind:this="{timerList}">
-            <ion-reorder-group disabled="false" on:ionItemReorder={doReorder}>
-                {#each timers as timer}
-                    <Timer {timer} on:tick={saveState} on:remove={removeTimer}/>
-                {/each}
-            </ion-reorder-group>
-        </ion-list>
-
-        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-            <ion-fab-button on:click={openAddModal}>
+    
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <ion-content on:click={closeListMenus}>
+        <TimerList filter="{(timer => !timer.archived)}" bind:list={timerList} />
+        
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <ion-fab vertical="bottom" horizontal="end" slot="fixed" on:click={openAddModal}>
+            <ion-fab-button>
                 <ion-icon name="add" />
             </ion-fab-button>
         </ion-fab>
     </ion-content>
-
+    
     <!-- Add modal -->
     <ion-modal bind:this="{addModal}">
         <ion-header>
@@ -98,9 +63,9 @@
                 <ion-title>Add Timer</ion-title>
             </ion-toolbar>
         </ion-header>
-
+        
         <ion-content>
-            <form on:submit="{addTimer}">
+            <form on:submit="{addTimerEventHandler}">
                 <ion-item>
                     <ion-label position="floating">Name</ion-label>
                     <ion-input bind:this="{addModalInput}" required value={addName} on:ionChange={changeEvt => addName = changeEvt.detail.value}></ion-input>
@@ -112,8 +77,7 @@
                 </ion-item>
             </form>
         </ion-content>
-      </ion-modal>
+    </ion-modal>
 </ion-app>
 
-<style>
-</style>
+<style></style>
