@@ -9,9 +9,5 @@
       "launchShowDuration": 0
     }
   },
-  "cordova": {},
-  "server": {
-      "url": "http://change-me:5000/",
-      "cleartext": true
-  }
+  "cordova": {}
 }

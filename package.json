@@ -1,6 +1,6 @@
 {
   "name": "multiempo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "#Build: Core": "Thesee scripts build the core application (routing logic, and views)",
