@@ -3,11 +3,13 @@
     import { onMount } from "svelte";
     import { addTimer } from "@store/timers";
 
-    var timerList: HTMLIonListElement;
+    let timerList: HTMLIonListElement;
     
     let addModal: HTMLIonModalElement;
     let addModalInput: HTMLIonInputElement;
     
+    let showArchived = false;
+
     onMount(() => {
         addModal.initialBreakpoint = 0.25;
         addModal.breakpoints = [0, 0.25];
@@ -37,8 +39,8 @@
         <ion-toolbar>
             <ion-title>Multiempo</ion-title>
             <ion-buttons slot="primary">
-                <ion-button href="/archive">
-                    <ion-icon slot="icon-only" name="archive" />
+                <ion-button on:click={_ => showArchived = !showArchived}>
+                    <ion-icon slot="icon-only" name="archive" color={showArchived ? "warning":""} />
                 </ion-button>
             </ion-buttons>
         </ion-toolbar>
@@ -46,7 +48,7 @@
     
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <ion-content on:click={closeListMenus}>
-        <TimerList filter="{(timer => !timer.archived)}" bind:list={timerList} />
+        <TimerList showArchived={showArchived} bind:list={timerList} />
         
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <ion-fab vertical="bottom" horizontal="end" slot="fixed" on:click={openAddModal}>

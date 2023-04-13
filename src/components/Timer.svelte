@@ -77,12 +77,21 @@
         event.preventDefault();
     }
 
-    function reset(event: Event) {
+    function reset(_event: Event) {
         timer.time = 0;
         dispatch("tick", timer);
     }
 
-    async function remove(event: Event) {
+    function archive(_event: Event) {
+        timer.archived = !timer.archived
+        if(timer.archived) {
+            stop();
+        }
+        detailsModal.dismiss();
+        dispatch("tick", timer);
+    }
+
+    async function remove(_event: Event) {
         const alert = await alertController.create({
             header: "Remove",
             message: `The timer ${timer.name} will be removed`,
@@ -105,11 +114,12 @@
         await alert.present();
     }
 
-    function openModal(event: CustomEvent) {
-        detailsModal.present();
+    function openModal(_event: CustomEvent) {
+        if(!timer.archived)
+            detailsModal.present();
     }
 
-    function pickTime(event: Event) {
+    function pickTime(_event: Event) {
         const range0toHours = [
             ...Array(Math.max(100, Math.ceil(timer.time / 3600))).keys(),
         ].map((n) => {
@@ -176,6 +186,7 @@
         <ion-avatar slot="start">
             <ion-button
                 color={timer._running ? "secondary" : "primary"}
+                disabled={timer.archived}
                 shape="round"
                 size="small"
                 on:click={toggle}
@@ -192,8 +203,11 @@
     </ion-item>
 
     <ion-item-options end icon-only>
-        <ion-item-option on:click={reset}>
+        <ion-item-option disabled={timer.archived} on:click={reset}>
             <ion-icon name="play-skip-back" />
+        </ion-item-option>
+        <ion-item-option color="warning" on:click={archive}>
+            <ion-icon name="archive" />
         </ion-item-option>
         <ion-item-option color="danger" on:click={remove}>
             <ion-icon name="trash-bin" />
@@ -213,8 +227,11 @@
                     <ion-input value={timer.name} on:ionChange={updateName} />
                 </ion-title>
                 <ion-buttons slot="end">
-                    <ion-button on:click={reset}>
+                    <ion-button disabled={timer.archived} on:click={reset}>
                         <ion-icon slot="icon-only" name="play-skip-back" />
+                    </ion-button>
+                    <ion-button color="warning" on:click={archive}>
+                        <ion-icon slot="icon-only" name="archive" />
                     </ion-button>
                     <ion-button color="danger" on:click={remove}>
                         <ion-icon slot="icon-only" name="trash-bin" />

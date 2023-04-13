@@ -1,11 +1,10 @@
 <script lang="ts">
     import type { ItemReorderCustomEvent } from "@ionic/core";
-    import type { TimerEntity } from "@entities/TimerEntity";
-    import { loadState, removeTimer, saveState, timers } from "@store/timers";
+    import { loadState, moveTimer, removeTimer, saveState, timers } from "@store/timers";
     import { onMount } from "svelte";
     import Timer from "./Timer.svelte";
     
-    export let filter: (value: TimerEntity, index?: number, array?: TimerEntity[]) => boolean;
+    export let showArchived = false;
 
     export let list: HTMLIonListElement;
 
@@ -17,20 +16,25 @@
         removeTimer(event.detail);
     }
     
-    function doReorder(event: ItemReorderCustomEvent) {
-        const movedElement = timers[event.detail.from];
-        // TODO:
-        //timers.splice(event.detail.from, 1);
-        //timers.splice(event.detail.to, 0, movedElement);
-        event.detail.complete();
-        saveState();
+    async function doReorder(event: ItemReorderCustomEvent) {
+        await moveTimer(event.detail.from, event.detail.to);
+        let unsubscribe;
+        unsubscribe = timers.subscribe(_ => {
+            event.detail.complete();
+        });
+    }
+
+    function shouldDisplay(archived: boolean, showArc: boolean): boolean {
+        return showArc ? archived : !archived;
     }
 </script>
 
 <ion-list id="timer-list" bind:this={list}>
     <ion-reorder-group disabled="false" on:ionItemReorder={doReorder}>
         {#each $timers as timer}
-            <Timer {timer} on:tick={saveState} on:remove={removeTimerEventHandler} />
+            <div style:display="{shouldDisplay(timer.archived, showArchived) ? 'block': 'none'}">
+                <Timer {timer} on:tick={saveState} on:remove={removeTimerEventHandler} />
+            </div>
         {/each}
     </ion-reorder-group>
 </ion-list>

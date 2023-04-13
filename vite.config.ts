@@ -35,5 +35,5 @@ export default defineConfig({
   resolve: {
     alias: aliases,
   },
-  optimizeDeps: { exclude: ["@roxi/routify", "@urql/svelte"] },
+  optimizeDeps: { exclude: ["@roxi/routify", "@urql/svelte", "fsevents"] },
 });
