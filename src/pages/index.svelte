@@ -34,24 +34,30 @@
     }
 </script>
 
+
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <ion-app>
     <ion-header>
-        <ion-toolbar>
-            <ion-title>Multiempo</ion-title>
+        <ion-toolbar class:archive-header={showArchived}>
+            <ion-title>
+                {#if showArchived}
+                    Archivo
+                {:else}
+                    Tiempos
+                {/if}
+            </ion-title>
             <ion-buttons slot="primary">
                 <ion-button on:click={_ => showArchived = !showArchived}>
-                    <ion-icon slot="icon-only" name="archive" color={showArchived ? "warning":""} />
+                    <ion-icon slot="icon-only" name="archive" />
                 </ion-button>
             </ion-buttons>
         </ion-toolbar>
     </ion-header>
     
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <ion-content on:click={closeListMenus}>
         <TimerList showArchived={showArchived} bind:list={timerList} />
         
         {#if !showArchived}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <ion-fab vertical="bottom" horizontal="end" slot="fixed" on:click={openAddModal}>
                 <ion-fab-button>
                     <ion-icon name="add" />
@@ -84,4 +90,8 @@
     </ion-modal>
 </ion-app>
 
-<style></style>
+<style>
+.archive-header {
+    --background: #FDC35B;
+}
+</style>

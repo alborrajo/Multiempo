@@ -21,12 +21,10 @@ export function removeTimer(timerToRemove: TimerEntity): Promise<void> {
 
 export function moveTimer(from: number, to: number): Promise<void> {
     console.log("Moving timer from ", from, "to", to);
-    console.log(_timers.map(timer => timer.name));
     const movedElement = _timers[from];
     _timers.splice(from, 1);
     _timers.splice(to, 0, movedElement);
     _timers = _timers;
-    console.log(_timers.map(timer => timer.name));
     return saveState();
 }
 

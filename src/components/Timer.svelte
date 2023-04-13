@@ -181,6 +181,7 @@
     dayjs.extend(duration);
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <ion-item-sliding bind:this={ionItemSliding}>
     <ion-item on:contextmenu={openMenu} on:click={openModal}>
         <ion-avatar slot="start">
@@ -203,11 +204,13 @@
     </ion-item>
 
     <ion-item-options end icon-only>
-        <ion-item-option disabled={timer.archived} on:click={reset}>
-            <ion-icon name="play-skip-back" />
-        </ion-item-option>
+        {#if !timer.archived}
+            <ion-item-option on:click={reset}>
+                <ion-icon name="play-skip-back" />
+            </ion-item-option>
+        {/if}
         <ion-item-option color="warning" on:click={archive}>
-            <ion-icon name="archive" />
+            <ion-icon class="horizontal-flip" name="{timer.archived ? 'exit' : 'archive'}" />
         </ion-item-option>
         <ion-item-option color="danger" on:click={remove}>
             <ion-icon name="trash-bin" />
@@ -227,11 +230,13 @@
                     <ion-input value={timer.name} on:ionChange={updateName} />
                 </ion-title>
                 <ion-buttons slot="end">
-                    <ion-button disabled={timer.archived} on:click={reset}>
-                        <ion-icon slot="icon-only" name="play-skip-back" />
-                    </ion-button>
+                    {#if !timer.archived}
+                        <ion-button on:click={reset}>
+                            <ion-icon slot="icon-only" name="play-skip-back" />
+                        </ion-button>
+                    {/if}
                     <ion-button color="warning" on:click={archive}>
-                        <ion-icon slot="icon-only" name="archive" />
+                        <ion-icon slot="icon-only" class="horizontal-flip" name="{timer.archived ? 'exit' : 'archive'}" />
                     </ion-button>
                     <ion-button color="danger" on:click={remove}>
                         <ion-icon slot="icon-only" name="trash-bin" />
@@ -321,5 +326,9 @@
         flex-direction: column;
         align-items: stretch;
         justify-content: center;
+    }
+
+    .horizontal-flip {
+        transform: scaleX(-1);
     }
 </style>
