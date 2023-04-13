@@ -50,12 +50,14 @@
     <ion-content on:click={closeListMenus}>
         <TimerList showArchived={showArchived} bind:list={timerList} />
         
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <ion-fab vertical="bottom" horizontal="end" slot="fixed" on:click={openAddModal}>
-            <ion-fab-button>
-                <ion-icon name="add" />
-            </ion-fab-button>
-        </ion-fab>
+        {#if !showArchived}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <ion-fab vertical="bottom" horizontal="end" slot="fixed" on:click={openAddModal}>
+                <ion-fab-button>
+                    <ion-icon name="add" />
+                </ion-fab-button>
+            </ion-fab>
+        {/if}
     </ion-content>
     
     <!-- Add modal -->

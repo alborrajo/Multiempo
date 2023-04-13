@@ -18,10 +18,7 @@
     
     async function doReorder(event: ItemReorderCustomEvent) {
         await moveTimer(event.detail.from, event.detail.to);
-        let unsubscribe;
-        unsubscribe = timers.subscribe(_ => {
-            event.detail.complete();
-        });
+        event.detail.complete(false);
     }
 
     function shouldDisplay(archived: boolean, showArc: boolean): boolean {
