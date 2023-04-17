@@ -1,97 +1,33 @@
 <script lang="ts">
     import type { TimerEntity } from "src/entities/TimerEntity";
-    import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { alertController, pickerController } from "@ionic/core";
-    import { isPlatform } from "@ionic/core";
     import dayjs from "dayjs";
     import duration from "dayjs/plugin/duration";
-
-    const dispatch = createEventDispatcher();
+    import { addSeconds, archive, removeTimer, reset, saveState, setRunning, stop } from "@store/timers";
 
     export let timer: TimerEntity;
 
-    let ionItemSliding: HTMLIonItemSlidingElement;
-
+    let popover: HTMLIonPopoverElement;
     let detailsModal: HTMLIonModalElement;
-
-    let intervalId: number;
-
-    onMount(() => {
-        // Don't keep counting when the app is closed on PC
-        if (isPlatform("mobile")) {
-            setRunning(timer._running);
-        } else {
-            setRunning(false);
-        }
-    });
-
-    onDestroy(() => {
-        stop();
-    });
-
+    
     function toggle(event: Event) {
         timer._lastTickTime = null;
-        setRunning(!timer._running);
+        setRunning(timer, !timer._running);
         event.stopPropagation();
     }
 
-    function setRunning(running: boolean) {
-        if (running) {
-            play();
-        } else {
-            stop();
-        }
+    function resetEvent(_event: Event) {
+        reset(timer);
+        popover.isOpen = false;
     }
 
-    function play() {
-        timer._running = true;
-        intervalId = setInterval(tick, 1000);
-        tick();
-    }
-
-    function stop() {
-        timer._running = false;
-        clearInterval(intervalId);
-    }
-
-    function tick() {
-        // In case a second happens to be longer than 1 second
-        // (App is suspended, for example)
-        const now = Date.now();
-
-        if (timer._lastTickTime != null) {
-            timer.time += (now - timer._lastTickTime) / 1000;
-        }
-
-        timer._lastTickTime = now;
-        dispatch("tick", timer);
-    }
-
-    function addSeconds(seconds: number) {
-        timer.time = Math.max(0, timer.time + seconds);
-        dispatch("tick", timer);
-    }
-
-    function openMenu(event: CustomEvent) {
-        ionItemSliding.open("end");
-        event.preventDefault();
-    }
-
-    function reset(_event: Event) {
-        timer.time = 0;
-        dispatch("tick", timer);
-    }
-
-    function archive(_event: Event) {
-        timer.archived = !timer.archived
-        if(timer.archived) {
-            stop();
-        }
+    function archiveEvent(_event: Event) {
+        archive(timer);
+        popover.isOpen = false;
         detailsModal.dismiss();
-        dispatch("tick", timer);
     }
 
-    async function remove(_event: Event) {
+    async function removeEvent(_event: Event) {
         const alert = await alertController.create({
             header: "Remove",
             message: `The timer ${timer.name} will be removed`,
@@ -104,9 +40,10 @@
                     text: "OK",
                     role: "confirm",
                     handler: () => {
-                        stop();
+                        stop(timer);
+                        popover.isOpen = false;
                         detailsModal.dismiss();
-                        dispatch("remove", timer);
+                        removeTimer(timer);
                     },
                 },
             ],
@@ -117,6 +54,13 @@
     function openModal(_event: CustomEvent) {
         if(!timer.archived)
             detailsModal.present();
+    }
+
+    function openPopover(event: CustomEvent) {
+        popover.event = event;
+        popover.isOpen = false;
+        popover.isOpen = true;
+        event.preventDefault();
     }
 
     function pickTime(_event: Event) {
@@ -169,21 +113,20 @@
     function updateName(event: Event) {
         timer.name = (event.currentTarget as HTMLIonInputElement)
             .value as string;
-        dispatch("tick", timer);
+        saveState();
     }
 
     function updateDescription(event: Event) {
         timer.description = (event.currentTarget as HTMLIonTextareaElement)
             .value as string;
-        dispatch("tick", timer);
+        saveState();
     }
 
     dayjs.extend(duration);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<ion-item-sliding bind:this={ionItemSliding}>
-    <ion-item on:contextmenu={openMenu} on:click={openModal}>
+    <ion-item id="timer-list-item" on:click={openModal} on:contextmenu={openPopover}>
         <ion-avatar slot="start">
             <ion-button
                 color={timer._running ? "secondary" : "primary"}
@@ -203,21 +146,30 @@
         <ion-reorder slot="end" />
     </ion-item>
 
-    <ion-item-options end icon-only>
-        {#if !timer.archived}
-            <ion-item-option on:click={reset}>
-                <ion-icon name="play-skip-back" />
-            </ion-item-option>
-        {/if}
-        <ion-item-option color="warning" on:click={archive}>
-            <ion-icon class="horizontal-flip" name="{timer.archived ? 'exit' : 'archive'}" />
-        </ion-item-option>
-        <ion-item-option color="danger" on:click={remove}>
-            <ion-icon name="trash-bin" />
-        </ion-item-option>
-    </ion-item-options>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <ion-popover reference="event" bind:this={popover}>
+        <ion-content>
+            <ion-list class="no-padding">
+                {#if !timer.archived}
+                <ion-item button="true" detail="false" on:click={resetEvent}>
+                    <ion-icon name="play-skip-back" />
+                    Reiniciar
+                </ion-item>
+                {/if}
+                <ion-item button="true" detail="false" color="warning" on:click={archiveEvent}>
+                    <ion-icon class="horizontal-flip" name="{timer.archived ? 'exit' : 'archive'}" />
+                    Archivar
+                </ion-item>
+                <ion-item button="true" detail="false" color="danger" on:click={removeEvent}>
+                    <ion-icon name="trash-bin" />
+                    Eliminar
+                </ion-item>
+            </ion-list>
+        </ion-content>
+    </ion-popover>
 
     <!-- Details Modal -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <ion-modal bind:this={detailsModal}>
         <ion-header>
             <ion-toolbar>
@@ -235,10 +187,10 @@
                             <ion-icon slot="icon-only" name="play-skip-back" />
                         </ion-button>
                     {/if}
-                    <ion-button color="warning" on:click={archive}>
+                    <ion-button color="warning" on:click={archiveEvent}>
                         <ion-icon slot="icon-only" class="horizontal-flip" name="{timer.archived ? 'exit' : 'archive'}" />
                     </ion-button>
-                    <ion-button color="danger" on:click={remove}>
+                    <ion-button color="danger" on:click={removeEvent}>
                         <ion-icon slot="icon-only" name="trash-bin" />
                     </ion-button>
                 </ion-buttons>
@@ -273,7 +225,7 @@
                         color="danger"
                         shape="round"
                         class="ion-text-capitalize"
-                        on:click={() => addSeconds(-60)}
+                        on:click={() => addSeconds(timer, -60)}
                     >
                         - 1m
                     </ion-button>
@@ -281,7 +233,7 @@
                         color="danger"
                         shape="round"
                         class="ion-text-capitalize"
-                        on:click={() => addSeconds(-600)}
+                        on:click={() => addSeconds(timer, -600)}
                     >
                         -10m
                     </ion-button>
@@ -298,7 +250,7 @@
                         color="tertiary"
                         shape="round"
                         class="ion-text-capitalize"
-                        on:click={() => addSeconds(60)}
+                        on:click={() => addSeconds(timer, 60)}
                     >
                         + 1m
                     </ion-button>
@@ -306,7 +258,7 @@
                         color="tertiary"
                         shape="round"
                         class="ion-text-capitalize"
-                        on:click={() => addSeconds(600)}
+                        on:click={() => addSeconds(timer, 600)}
                     >
                         +10m
                     </ion-button>
@@ -314,7 +266,6 @@
             </ion-toolbar>
         </ion-footer>
     </ion-modal>
-</ion-item-sliding>
 
 <style>
     .fullheight {
@@ -330,5 +281,9 @@
 
     .horizontal-flip {
         transform: scaleX(-1);
+    }
+
+    .no-padding {
+        padding: 0;
     }
 </style>
