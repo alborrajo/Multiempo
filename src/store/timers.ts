@@ -42,7 +42,7 @@ export async function saveState(): Promise<void> {
 }
 
 export async function loadState(): Promise<void> {
-    _timers = JSON.parse((await Storage.get({key: STORAGE_TIMERS_KEY})).value) ?? [];
+    _timers = (JSON.parse((await Storage.get({key: STORAGE_TIMERS_KEY})).value) ?? []).filter(timer => timer != null);
     for (const timer of _timers) {
         // Don't keep counting when the app is closed on PC
         if (isPlatform("mobile")) {
