@@ -91,6 +91,7 @@ export function tick(timer: TimerEntity) {
 
 export function addSeconds(timer: TimerEntity, seconds: number) {
     timer.time = Math.max(0, timer.time + seconds);
+    tick(timer);
 }
 
 export function reset(timer: TimerEntity) {

@@ -183,7 +183,7 @@
                 </ion-title>
                 <ion-buttons slot="end">
                     {#if !timer.archived}
-                        <ion-button on:click={reset}>
+                        <ion-button on:click={resetEvent}>
                             <ion-icon slot="icon-only" name="play-skip-back" />
                         </ion-button>
                     {/if}
