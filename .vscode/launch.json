@@ -19,7 +19,10 @@
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
-            "url": "http://localhost:5000/"
+            "url": "http://localhost:5000/",
+            "timeout": 30,
+            "tmpDir": "${workspaceFolder}/.firefoxtmp", // Necessary so it works with snap Firefox
+            "firefoxArgs": ["-devtools"]
         }
     ]
 }

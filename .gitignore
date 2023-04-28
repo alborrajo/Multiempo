@@ -6,6 +6,8 @@
 .env
 .DS_Store
 
+.firefoxtmp
+
 resources/android/icon
 resources/android/splash
 resources/ios/icon

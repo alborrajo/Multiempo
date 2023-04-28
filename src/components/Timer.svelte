@@ -140,6 +140,7 @@
         </ion-avatar>
         <ion-label>
             <h2 class="ion-text-wrap">{timer.name}</h2>
+            <h4 title={timer.description}>{timer.description ?? ''}</h4>
             <h3>{dayjs.duration(timer.time, "seconds").format("HH:mm:ss")}</h3>
         </ion-label>
 
@@ -153,16 +154,20 @@
                 {#if !timer.archived}
                 <ion-item button="true" detail="false" on:click={resetEvent}>
                     <ion-icon name="play-skip-back" />
-                    Reiniciar
+                    Reset
                 </ion-item>
                 {/if}
                 <ion-item button="true" detail="false" color="warning" on:click={archiveEvent}>
                     <ion-icon class="horizontal-flip" name="{timer.archived ? 'exit' : 'archive'}" />
-                    Archivar
+                    {#if timer.archived}
+                        Unarchive
+                    {:else}
+                        Archive
+                    {/if}
                 </ion-item>
                 <ion-item button="true" detail="false" color="danger" on:click={removeEvent}>
                     <ion-icon name="trash-bin" />
-                    Eliminar
+                    Remove
                 </ion-item>
             </ion-list>
         </ion-content>

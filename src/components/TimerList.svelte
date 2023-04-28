@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { ItemReorderCustomEvent } from "@ionic/core";
-    import { archive, moveTimer, timers } from "@store/timers";
+    import { moveTimer, timers } from "@store/timers";
     import Timer from "./Timer.svelte";
     
     export let showArchived = false;

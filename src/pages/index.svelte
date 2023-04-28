@@ -41,9 +41,9 @@
         <ion-toolbar class:archive-header={showArchived}>
             <ion-title>
                 {#if showArchived}
-                    Archivo
+                    Archived
                 {:else}
-                    Tiempos
+                    Timers
                 {/if}
             </ion-title>
             <ion-buttons slot="primary">
