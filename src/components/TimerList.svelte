@@ -20,9 +20,9 @@
 <ion-list id="timer-list" bind:this={list}>
     <ion-reorder-group disabled="false" on:ionItemReorder={doReorder}>
         {#each $timers as timer}
-            {#if shouldDisplay(timer.archived, showArchived)}
+            <div style:display={shouldDisplay(timer.archived, showArchived) ? 'block' : 'none'} >
                 <Timer {timer} />
-            {/if}
+            </div>
         {/each}
     </ion-reorder-group>
 </ion-list>
