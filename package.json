@@ -37,6 +37,7 @@
     "vite": "^4.2.1",
     "vite-aliases": "^0.6.3",
     "vite-plugin-compression": "^0.2.5",
+    "vite-plugin-static-copy": "^0.16.0",
     "vite-tsconfig-paths": "^3.3.10"
   },
   "dependencies": {
