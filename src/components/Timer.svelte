@@ -4,8 +4,11 @@
     import dayjs from "dayjs";
     import duration from "dayjs/plugin/duration";
     import { addSeconds, archive, removeTimer, reset, saveState, setRunning, stop } from "@store/timers";
-
+    
     export let timer: TimerEntity;
+    
+    const DAYJS_FORMAT_TIME = "HH:mm:ss";
+    const DAYJS_FORMAT_REFERENCEDATE = "dddd, MMMM DD, YYYY";
 
     let popover: HTMLIonPopoverElement;
     let detailsModal: HTMLIonModalElement;
@@ -64,17 +67,10 @@
     }
 
     function pickTime(_event: Event) {
-        const range0toHours = [
-            ...Array(Math.max(100, Math.ceil(timer.time / 3600))).keys(),
-        ].map((n) => {
-            return { text: n.toString(), value: n };
-        });
-        const range0to60Minutes = [...Array(60).keys()].map((n) => {
-            return { text: n.toString(), value: n };
-        });
-        const range0to60Seconds = [...Array(60).keys()].map((n) => {
-            return { text: n.toString(), value: n };
-        });
+        const maxHours = Math.max(100, Math.ceil(timer.time / 3600));
+        const range0toHours = [...Array(maxHours).keys(),].map((n) => ({ text: n.toString(), value: n }));
+        const range0to60Minutes = [...Array(60).keys()].map((n) => ({ text: n.toString(), value: n }));
+        const range0to60Seconds = [...Array(60).keys()].map((n) => ({ text: n.toString(), value: n }));
         pickerController
             .create({
                 columns: [
@@ -116,6 +112,11 @@
         saveState();
     }
 
+    function updateReferenceDate(event: Event) {
+        timer.referenceDate = new Date((event.currentTarget as HTMLIonInputElement).value).getTime();
+        saveState();
+    }
+
     function updateDescription(event: Event) {
         timer.description = (event.currentTarget as HTMLIonTextareaElement)
             .value as string;
@@ -141,7 +142,10 @@
         <ion-label>
             <h2 class="ion-text-wrap">{timer.name}</h2>
             <h4 title={timer.description}>{timer.description ?? ''}</h4>
-            <h3>{dayjs.duration(timer.time, "seconds").format("HH:mm:ss")}</h3>
+            {#if  timer.referenceDate != null}
+                <h5 class="ion-text-wrap">{dayjs(timer.referenceDate).format(DAYJS_FORMAT_REFERENCEDATE)}</h5>
+            {/if}
+            <h3>{dayjs.duration(timer.time, "seconds").format(DAYJS_FORMAT_TIME)}</h3>
         </ion-label>
 
         <ion-reorder slot="end" />
@@ -172,6 +176,7 @@
             </ion-list>
         </ion-content>
     </ion-popover>
+
 
     <!-- Details Modal -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -208,9 +213,10 @@
                     <h1 on:click={pickTime}>
                         {dayjs
                             .duration(timer.time, "seconds")
-                            .format("HH:mm:ss")}
+                            .format(DAYJS_FORMAT_TIME)}
                     </h1>
                 </ion-label>
+                <ion-input id="referenceDateInput" type="date" value={timer.referenceDate == null ? '' : dayjs(timer.referenceDate).format("YYYY-MM-DD")} on:ionChange={updateReferenceDate}/>
                 <ion-item>
                     <ion-textarea
                         auto-grow="true"
@@ -290,5 +296,12 @@
 
     .no-padding {
         padding: 0;
+    }
+
+    #referenceDateInput {
+        height: fit-content;
+        flex-grow: 0;
+        width: fit-content;
+        align-self: center;
     }
 </style>

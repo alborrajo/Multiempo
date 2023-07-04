@@ -14,7 +14,7 @@ loadState();
 
 export function addTimer(name: string): Promise<void> {
     console.log("New timer:", name);
-    _timers = [..._timers, {name: name, time: 0, archived: false}];
+    _timers = [{name: name, referenceDate: Date.now(), time: 0, archived: false}, ..._timers];
     return saveState();
 }
 
