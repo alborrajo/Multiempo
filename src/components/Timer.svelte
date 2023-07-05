@@ -113,7 +113,12 @@
     }
 
     function updateReferenceDate(event: Event) {
-        timer.referenceDate = new Date((event.currentTarget as HTMLIonInputElement).value).getTime();
+        const value = (event.currentTarget as HTMLIonInputElement).value;
+        if(value === "") {
+            timer.referenceDate = null;
+        } else {
+            timer.referenceDate = new Date(value).getTime();
+        }
         saveState();
     }
 
