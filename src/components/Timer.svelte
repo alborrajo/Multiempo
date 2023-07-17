@@ -8,7 +8,7 @@
     export let timer: TimerEntity;
     
     const DAYJS_FORMAT_TIME = "HH:mm:ss";
-    const DAYJS_FORMAT_REFERENCEDATE = "dddd, MMMM DD, YYYY";
+    const DAYJS_FORMAT_REFERENCEDATE = "ddd, MMMM DD, YYYY";
 
     let popover: HTMLIonPopoverElement;
     let detailsModal: HTMLIonModalElement;
@@ -122,6 +122,16 @@
         saveState();
     }
 
+    function updateReferenceEndDate(event: Event) {
+        const value = (event.currentTarget as HTMLIonInputElement).value;
+        if(value === "") {
+            timer.referenceEndDate = null;
+        } else {
+            timer.referenceEndDate = new Date(value).getTime();
+        }
+        saveState();
+    }
+
     function updateDescription(event: Event) {
         timer.description = (event.currentTarget as HTMLIonTextareaElement)
             .value as string;
@@ -145,12 +155,16 @@
             </ion-button>
         </ion-avatar>
         <ion-label>
-            <h2 class="ion-text-wrap">{timer.name}</h2>
+            <h2 class="ion-text-wrap semibold">{timer.name}</h2>
             <h4 title={timer.description}>{timer.description ?? ''}</h4>
-            {#if  timer.referenceDate != null}
-                <h5 class="ion-text-wrap">{dayjs(timer.referenceDate).format(DAYJS_FORMAT_REFERENCEDATE)}</h5>
-            {/if}
-            <h3>{dayjs.duration(timer.time, "seconds").format(DAYJS_FORMAT_TIME)}</h3>
+            <ion-text class="referenceDateLine" color="medium">
+                {#if  timer.referenceDate != null && timer.referenceEndDate != null}
+                    <h5 class="ion-text-wrap">From <i>{dayjs(timer.referenceDate).format(DAYJS_FORMAT_REFERENCEDATE)}</i> to <i>{dayjs(timer.referenceEndDate).format(DAYJS_FORMAT_REFERENCEDATE)}</i></h5>
+                {:else if timer.referenceDate != null}
+                    <h5 class="ion-text-wrap"><i>{dayjs(timer.referenceDate).format(DAYJS_FORMAT_REFERENCEDATE)}</i></h5>
+                {/if}
+            </ion-text>
+            <h2>{dayjs.duration(timer.time, "seconds").format(DAYJS_FORMAT_TIME)}</h2>
         </ion-label>
 
         <ion-reorder slot="end" />
@@ -193,8 +207,10 @@
                         <ion-icon slot="icon-only" name="close" />
                     </ion-button>
                 </ion-buttons>
-                <ion-title>
-                    <ion-input value={timer.name} on:ionChange={updateName} />
+                <ion-title on:click={pickTime}>
+                    {dayjs
+                        .duration(timer.time, "seconds")
+                        .format(DAYJS_FORMAT_TIME)}
                 </ion-title>
                 <ion-buttons slot="end">
                     {#if !timer.archived}
@@ -214,20 +230,25 @@
 
         <ion-content>
             <div class="ion-text-center fullheight xc">
-                <ion-label>
-                    <h1 on:click={pickTime}>
-                        {dayjs
-                            .duration(timer.time, "seconds")
-                            .format(DAYJS_FORMAT_TIME)}
-                    </h1>
-                </ion-label>
-                <ion-input id="referenceDateInput" type="date" value={timer.referenceDate == null ? '' : dayjs(timer.referenceDate).format("YYYY-MM-DD")} on:ionChange={updateReferenceDate}/>
-                <ion-item>
+                <div class="timerInfo">
+                    <ion-label>
+                        <h1><ion-input value={timer.name} on:ionChange={updateName} /></h1>
+                    </ion-label>
+                    <ion-text color="medium" class="referenceDates">
+                    {#if timer.referenceDate != null}
+                        From&nbsp;<ion-input class="referenceDateInput" type="date" value={timer.referenceDate == null ? '' : dayjs(timer.referenceDate).format("YYYY-MM-DD")} on:ionChange={updateReferenceDate}/>
+                        To&nbsp;<ion-input class="referenceDateInput" type="date" value={timer.referenceEndDate == null ? '' : dayjs(timer.referenceEndDate).format("YYYY-MM-DD")} on:ionChange={updateReferenceEndDate}/>
+                    {:else}
+                        <ion-input class="referenceDateInput" type="date" value={timer.referenceDate == null ? '' : dayjs(timer.referenceDate).format("YYYY-MM-DD")} on:ionChange={updateReferenceDate}/>
+                    {/if}
+                    </ion-text>
+                </div>
+                <ion-item class="timerDetails">
                     <ion-textarea
                         auto-grow="true"
                         placeholder="Description"
                         value={timer.description}
-                        class="ion-text-center"
+                        class="ion-text"
                         on:ionChange={updateDescription}
                     />
                 </ion-item>
@@ -303,10 +324,33 @@
         padding: 0;
     }
 
-    #referenceDateInput {
+    .timerInfo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-grow: 1;
+    }
+
+    .referenceDateLine i {
+        white-space: nowrap;
+    }
+
+    .referenceDates {
+        display:grid;
+        align-items: center;
+        align-self: center;
+        text-align: start;
+        grid-template-columns: auto auto;
+    }
+    
+    .referenceDateInput {
         height: fit-content;
         flex-grow: 0;
         width: fit-content;
         align-self: center;
+        --padding-top: 5px;
+        --padding-bottom: 5px;
+        --padding-start: 0px;
+        --padding-end: 0px;
     }
 </style>
