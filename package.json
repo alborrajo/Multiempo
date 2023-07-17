@@ -49,6 +49,7 @@
     "@capacitor/ios": "^3.0.1",
     "@capacitor/storage": "^1.2.4",
     "@ionic/core": "^7.0.2",
+    "@tauri-apps/api": "^1.4.0",
     "dayjs": "^1.10.7"
   }
 }
