@@ -5,7 +5,7 @@
     
     export let showArchived = false;
 
-    export let list: HTMLIonListElement;
+    let list: HTMLIonListElement;
     
     async function doReorder(event: ItemReorderCustomEvent) {
         await moveTimer(event.detail.from, event.detail.to);
@@ -21,7 +21,7 @@
     <ion-reorder-group disabled="false" on:ionItemReorder={doReorder}>
         {#each $timers as timer}
             <div style:display={shouldDisplay(timer.archived, showArchived) ? 'block' : 'none'} >
-                <Timer {timer} />
+                <Timer {timer}/>
             </div>
         {/each}
     </ion-reorder-group>

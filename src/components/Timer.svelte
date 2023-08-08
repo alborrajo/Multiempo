@@ -6,7 +6,7 @@
     import { addSeconds, archive, removeTimer, reset, saveState, setRunning, stop } from "@store/timers";
     
     export let timer: TimerEntity;
-    
+
     const DAYJS_FORMAT_TIME = "HH:mm:ss";
     const DAYJS_FORMAT_REFERENCEDATE = "ddd, MMMM DD, YYYY";
 
@@ -57,6 +57,10 @@
     function openModal(_event: CustomEvent) {
         if(!timer.archived)
             detailsModal.present();
+    }
+
+    function closeModal(_event: Event) {
+        detailsModal.dismiss();
     }
 
     function openPopover(event: CustomEvent) {
@@ -138,6 +142,14 @@
         saveState();
     }
 
+
+    function modalOnKeyUp(event: KeyboardEvent) {
+        if(event.ctrlKey  && event.key == "Enter") {
+            closeModal(event);
+        }
+    }
+
+
     dayjs.extend(duration);
 </script>
 
@@ -199,19 +211,14 @@
 
     <!-- Details Modal -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <ion-modal bind:this={detailsModal}>
+    <ion-modal bind:this={detailsModal} on:keyup={modalOnKeyUp}>
         <ion-header>
             <ion-toolbar>
                 <ion-buttons slot="start">
-                    <ion-button on:click={() => detailsModal.dismiss()}>
+                    <ion-button title="Close timer details (Control+Enter)" aria-keyshortcuts="Control+Enter" on:click={closeModal}>
                         <ion-icon slot="icon-only" name="close" />
                     </ion-button>
                 </ion-buttons>
-                <ion-title on:click={pickTime}>
-                    {dayjs
-                        .duration(timer.time, "seconds")
-                        .format(DAYJS_FORMAT_TIME)}
-                </ion-title>
                 <ion-buttons slot="end">
                     {#if !timer.archived}
                         <ion-button on:click={resetEvent}>
@@ -232,7 +239,7 @@
             <div class="ion-text-center fullheight xc">
                 <div class="timerInfo">
                     <ion-label>
-                        <h1><ion-input value={timer.name} on:ionChange={updateName} /></h1>
+                        <h1><ion-textarea value={timer.name} on:ionChange={updateName} /></h1>
                     </ion-label>
                     <ion-text color="medium" class="referenceDates">
                     {#if timer.referenceDate != null}
@@ -257,7 +264,13 @@
 
         <ion-footer class="ion-no-border">
             <ion-toolbar>
-                <ion-buttons class="ion-justify-content-center">
+                <ion-title class="modal-timer ion-justify-content-center" on:click={pickTime}>
+                    {dayjs
+                        .duration(timer.time, "seconds")
+                        .format(DAYJS_FORMAT_TIME)}
+                </ion-title>
+
+                <ion-buttons class="time-buttons ion-justify-content-center">
                     <ion-button
                         color="danger"
                         shape="round"
@@ -352,5 +365,18 @@
         --padding-bottom: 5px;
         --padding-start: 0px;
         --padding-end: 0px;
+    }
+
+    .time-buttons {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        width: fit-content;
+        margin: auto;
+    }
+
+    .modal-timer {
+        width: fit-content;
+        margin: auto;
     }
 </style>

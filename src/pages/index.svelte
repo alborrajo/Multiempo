@@ -2,9 +2,8 @@
     import TimerList from "@components/TimerList.svelte";
     import { onMount } from "svelte";
     import { addTimer } from "@store/timers";
-
-    let timerList: HTMLIonListElement;
     
+    let fabAdd: HTMLIonFabElement;
     let addModal: HTMLIonModalElement;
     let addModalInput: HTMLIonInputElement;
     
@@ -13,17 +12,15 @@
     onMount(() => {
         addModal.initialBreakpoint = 0.25;
         addModal.breakpoints = [0, 0.25];
+
+        document.onkeydown = fabOnKeyDown;
     });
     
     let addName='';
     
-    function closeListMenus(_event: Event) {
-        timerList.closeSlidingItems();
-    }
-    
     function openAddModal() {
         addModal.present();
-        addModalInput.setFocus();
+        setTimeout(() => addModalInput.setFocus(), 10);
     }
     
     function addTimerEventHandler(event: SubmitEvent) {
@@ -31,6 +28,13 @@
         addModal.dismiss();
         addName = '';
         event.preventDefault();
+    }
+
+    function fabOnKeyDown(event: KeyboardEvent) {
+        if (fabAdd?.checkVisibility() && event.ctrlKey && event.key == "a") {
+            openAddModal();
+            event.preventDefault();
+        }
     }
 </script>
 
@@ -54,11 +58,11 @@
         </ion-toolbar>
     </ion-header>
     
-    <ion-content on:click={closeListMenus}>
-        <TimerList showArchived={showArchived} bind:list={timerList} />
+    <ion-content>
+        <TimerList showArchived={showArchived} />
         
         {#if !showArchived}
-            <ion-fab vertical="bottom" horizontal="end" slot="fixed" on:click={openAddModal}>
+            <ion-fab vertical="bottom" horizontal="end" slot="fixed" title="Add new timer (Ctrl+A)" aria-keyshortcuts="Control+A" on:click={openAddModal} bind:this={fabAdd}>
                 <ion-fab-button>
                     <ion-icon name="add" />
                 </ion-fab-button>
