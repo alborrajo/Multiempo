@@ -88,9 +88,9 @@ export function tick(timer: TimerEntity) {
 
     timer._lastTickTime = now;
 
-    if(Math.floor(timer.time) % 10 == 0) {
-        sendNotification("Probando noti "+timer.name+" "+timer.time);
-    }
+    //if(Math.floor(timer.time) % 10 == 0) {
+    //    sendNotification("Probando noti "+timer.name+" "+timer.time);
+    //}
 
     saveState();
 }
