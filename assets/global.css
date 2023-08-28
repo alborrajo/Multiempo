@@ -2,3 +2,12 @@
     font-weight: normal;
     text-shadow: 0 0 0 black;
 }
+
+body {
+    background-image: url('/img/bg/bg.png') !important;
+    background-position-y: bottom !important;
+}
+
+* {
+    --ion-background-color: rgba(0,0,0,0);
+}
