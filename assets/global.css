@@ -8,7 +8,9 @@ body {
     background-position-y: bottom !important;
 }
 
-ion-modal {
+ion-modal,
+ion-popover,
+ion-alert {
     --ion-background-color: white;
 }
 
