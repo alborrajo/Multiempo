@@ -4,18 +4,45 @@
     import dayjs from "dayjs";
     import duration from "dayjs/plugin/duration";
     import { addSeconds, archive, removeTimer, reset, saveState, setRunning, stop } from "@store/timers";
+    import { onMount } from "svelte";
     
     export let timer: TimerEntity;
+
+    const HOUR = 60 * 60;
+    const HALF_HOUR = 30 * 60;
 
     const DAYJS_FORMAT_TIME = "HH:mm:ss";
     const DAYJS_FORMAT_REFERENCEDATE = "ddd, MMMM DD, YYYY";
 
     let popover: HTMLIonPopoverElement;
     let detailsModal: HTMLIonModalElement;
+
+    let audioStop: HTMLAudioElement | undefined;
+    let audioStart: HTMLAudioElement | undefined;
+    let audio30min: HTMLAudioElement | undefined;
+    let audio1hour: HTMLAudioElement | undefined;
+
+    $: if(timer.time > 0 && Math.floor(timer.time) % HOUR == 0) {
+        audio1hour?.play();
+    } else if (timer.time > 0 && Math.floor(timer.time) % HALF_HOUR == 0) {
+        audio30min?.play();
+    }
+
+    onMount(() => {
+        audioStop = new Audio("/sfx/stop.wav");
+        audioStart = new Audio("/sfx/start.wav");
+        audio30min = new Audio("/sfx/30min.wav");
+        audio1hour = new Audio("/sfx/1hour.wav");
+    })
     
     function toggle(event: Event) {
         timer._lastTickTime = null;
         setRunning(timer, !timer._running);
+        if (timer._running) {
+            audioStart?.play();
+        } else {
+            audioStop?.play();
+        }
         event.stopPropagation();
     }
 
