@@ -1,7 +1,8 @@
 <script lang="ts">
     import TimerList from "@components/TimerList.svelte";
     import { onMount } from "svelte";
-    import { addTimer } from "@store/timers";
+    import { addTimer, exportRawState, importRawState, removeAllTimers } from "@store/timers";
+    import { alertController } from "@ionic/core";
     
     let fabAdd: HTMLIonFabElement;
     let addModal: HTMLIonModalElement;
@@ -36,6 +37,54 @@
             event.preventDefault();
         }
     }
+
+    async function importTimers(_event: Event) {
+        // lol
+        const element: HTMLInputElement = document.createElement('input');
+        element.type = 'file';
+        element.accept = 'application/json';
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        await new Promise(resolve => element.onchange = resolve);
+
+        const rawState = await element.files[0].text();
+        await importRawState(rawState);
+
+        document.body.removeChild(element);
+    }
+
+    async function exportTimers(_event: Event): Promise<void> {
+        const rawState = await exportRawState();
+
+        // lmao
+        const element: HTMLAnchorElement = document.createElement('a');
+        element.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(rawState);
+        element.download = 'state.json';
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+
+    async function confirmRemoveAllTimers(_event: Event): Promise<void> {
+        const alert = await alertController.create({
+            header: "Remove all timers",
+            message: 'Are you sure you want to proceed?',
+            buttons: [
+                {
+                    text: "Cancel",
+                    role: "cancel",
+                },
+                {
+                    text: "OK",
+                    role: "confirm",
+                    handler: () => removeAllTimers(),
+                },
+            ],
+        });
+        await alert.present();
+    }
 </script>
 
 
@@ -51,9 +100,27 @@
                 {/if}
             </ion-title>
             <ion-buttons slot="primary">
+                <!-- Archived -->
                 <ion-button on:click={_ => showArchived = !showArchived}>
                     <ion-icon slot="icon-only" name="archive" />
                 </ion-button>
+
+                <!-- Menu -->
+                <ion-button id="menu-button">
+                    <ion-icon slot="icon-only" name="menu" />
+                </ion-button>
+                <ion-popover trigger="menu-button" triggerAction="click">
+                    <ng-template>
+                        <ion-content>
+                            <ion-list>
+                                <ion-item button="true" detail="false" on:click={importTimers}>Import timers</ion-item>
+                                <ion-item button="true" detail="false" on:click={exportTimers}>Export timers</ion-item>
+
+                                <ion-item button="true" detail="false" class="danger" on:click={confirmRemoveAllTimers}>Remove all timers</ion-item>
+                            </ion-list>
+                        </ion-content>
+                    </ng-template>
+                </ion-popover>
             </ion-buttons>
         </ion-toolbar>
     </ion-header>

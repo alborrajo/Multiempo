@@ -34,6 +34,12 @@ export function moveTimer(from: number, to: number): Promise<void> {
     return saveState();
 }
 
+export function removeAllTimers(): Promise<void> {
+    console.log("Removing all timers");
+    _timers = [];
+    return saveState();
+}
+
 export async function saveState(): Promise<void> {
     await Storage.set({
         key: STORAGE_TIMERS_KEY,
@@ -53,6 +59,17 @@ export async function loadState(): Promise<void> {
         }
     }
     timers.set(_timers);
+}
+
+export async function exportRawState(): Promise<string> {
+    console.log("Exporting raw state");
+    return (await Storage.get({key: STORAGE_TIMERS_KEY})).value;
+}
+
+export async function importRawState(rawState: string): Promise<void> {
+    console.log("Importing raw state");
+    await Storage.set({key: STORAGE_TIMERS_KEY, value: rawState});
+    return await loadState();
 }
 
 
