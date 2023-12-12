@@ -4,7 +4,8 @@
 }
 
 body {
-    background-image: url('/img/bg/bg.png') !important;
+    transition: background-image 0.2s ease-in-out;
+    background-image: var(--multiempo-background-image-url) !important;
     background-position-y: bottom !important;
 }
 

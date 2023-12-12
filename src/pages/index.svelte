@@ -122,6 +122,8 @@
                                     {/if}
                                 </ion-item>
 
+                                <ion-item button="true" detail="false" href="/backgrounds">Set background</ion-item>
+
                                 <ion-item button="true" detail="false" on:click={importTimers}>Import timers</ion-item>
                                 <ion-item button="true" detail="false" on:click={exportTimers}>Export timers</ion-item>
 
