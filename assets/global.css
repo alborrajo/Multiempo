@@ -10,7 +10,8 @@ body {
 
 ion-modal,
 ion-popover,
-ion-alert {
+ion-alert,
+ion-picker {
     --ion-background-color: white;
 }
 
