@@ -115,7 +115,7 @@
                         <ion-content>
                             <ion-list>
                                 <ion-item button="true" detail="false" on:click={() => $mute = !$mute}>
-                                    {#if $mute}
+                                    {#if $mute == true}
                                         Unmute
                                     {:else}
                                         Mute
