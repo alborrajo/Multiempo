@@ -54,9 +54,26 @@
         event.stopPropagation();
     }
 
-    function resetEvent(_event: Event) {
-        reset(timer);
-        popover.isOpen = false;
+    async function resetEvent(_event: Event) {
+        const alert = await alertController.create({
+            header: "Reset",
+            message: `The timer ${timer.name} will be reset`,
+            buttons: [
+                {
+                    text: "Cancel",
+                    role: "cancel",
+                },
+                {
+                    text: "OK",
+                    role: "confirm",
+                    handler: () => {
+                        reset(timer);
+                        popover.isOpen = false;
+                    },
+                },
+            ],
+        });
+        await alert.present();
     }
 
     function archiveEvent(_event: Event) {
