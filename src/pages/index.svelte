@@ -3,6 +3,7 @@
     import { onMount } from "svelte";
     import { addTimer, exportRawState, importRawState, removeAllTimers } from "@store/timers";
     import { alertController } from "@ionic/core";
+    import { mute } from "@store/settings";
     
     let fabAdd: HTMLIonFabElement;
     let addModal: HTMLIonModalElement;
@@ -113,6 +114,14 @@
                     <ng-template>
                         <ion-content>
                             <ion-list>
+                                <ion-item button="true" detail="false" on:click={() => $mute = !$mute}>
+                                    {#if $mute}
+                                        Unmute
+                                    {:else}
+                                        Mute
+                                    {/if}
+                                </ion-item>
+
                                 <ion-item button="true" detail="false" on:click={importTimers}>Import timers</ion-item>
                                 <ion-item button="true" detail="false" on:click={exportTimers}>Export timers</ion-item>
 

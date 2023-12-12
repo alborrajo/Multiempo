@@ -2,7 +2,6 @@ import { writable } from "svelte/store";
 import { Storage } from "@capacitor/storage";
 import type { TimerEntity } from "@entities/TimerEntity";
 import { isPlatform } from "@ionic/core";
-import { sendNotification } from "../utils/Notifications";
 
 const STORAGE_TIMERS_KEY = "timers";
 
