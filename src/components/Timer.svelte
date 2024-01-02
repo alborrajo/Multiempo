@@ -221,7 +221,7 @@
         <ion-label>
             <h2 class="ion-text-wrap semibold">{timer.name}</h2>
             <h4 title={timer.description}>{timer.description ?? ''}</h4>
-            <ion-text class="referenceDateLine" color="medium">
+            <ion-text class="referenceDateLine">
                 {#if  timer.referenceDate != null && timer.referenceEndDate != null}
                     <h5 class="ion-text-wrap">From <i>{dayjs(timer.referenceDate).format(DAYJS_FORMAT_REFERENCEDATE)}</i> to <i>{dayjs(timer.referenceEndDate).format(DAYJS_FORMAT_REFERENCEDATE)}</i></h5>
                 {:else if timer.referenceDate != null}
@@ -397,6 +397,7 @@
     }
 
     .referenceDateLine i {
+        color: #474d59;
         white-space: nowrap;
     }
 

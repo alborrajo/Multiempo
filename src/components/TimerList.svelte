@@ -29,6 +29,9 @@
 
 <style>
     #timer-list {
-        padding-bottom: 4em;
+        padding-bottom: 0;
+        margin-bottom: 4em;
+        backdrop-filter: blur(1.5px);
+        background-color: rgb(255,255,255,0.4);
     }
 </style>
