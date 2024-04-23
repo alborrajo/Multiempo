@@ -12,7 +12,6 @@
     const HOUR = 60 * 60;
     const HALF_HOUR = 30 * 60;
 
-    const DAYJS_FORMAT_TIME = "HH:mm:ss";
     const DAYJS_FORMAT_REFERENCEDATE = "ddd, MMMM DD, YYYY";
 
     let popover: HTMLIonPopoverElement;
@@ -22,6 +21,12 @@
     let audioStart: HTMLAudioElement | undefined;
     let audio30min: HTMLAudioElement | undefined;
     let audio1hour: HTMLAudioElement | undefined;
+
+    let formattedTime: string;
+    $: {
+        const duration = dayjs.duration(timer.time, "seconds");
+        formattedTime = duration.asHours().toFixed().padStart(2, '0') + duration.format(":mm:ss");
+    }
 
     $: if(!$mute && timer.time > 0) {
         const time = Math.floor(timer.time);
@@ -228,7 +233,7 @@
                     <h5 class="ion-text-wrap"><i>{dayjs(timer.referenceDate).format(DAYJS_FORMAT_REFERENCEDATE)}</i></h5>
                 {/if}
             </ion-text>
-            <h2>{dayjs.duration(timer.time, "seconds").format(DAYJS_FORMAT_TIME)}</h2>
+            <h2>{formattedTime}</h2>
         </ion-label>
 
         <ion-reorder slot="end" />
@@ -317,9 +322,7 @@
         <ion-footer class="ion-no-border">
             <ion-toolbar>
                 <ion-title class="modal-timer ion-justify-content-center" on:click={pickTime}>
-                    {dayjs
-                        .duration(timer.time, "seconds")
-                        .format(DAYJS_FORMAT_TIME)}
+                    {formattedTime}
                 </ion-title>
 
                 <ion-buttons class="time-buttons ion-justify-content-center">
