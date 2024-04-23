@@ -160,7 +160,7 @@
             <form on:submit="{addTimerEventHandler}">
                 <ion-item>
                     <ion-label position="floating">Name</ion-label>
-                    <ion-input bind:this="{addModalInput}" required value={addName} on:ionChange={changeEvt => addName = changeEvt.detail.value}></ion-input>
+                    <ion-input bind:this="{addModalInput}" required value={addName} on:ionInput={changeEvt => addName = changeEvt.detail.value}></ion-input>
                     <ion-avatar slot="end">
                         <ion-button type="submit" color="primary" size="small" shape="round" disabled={addName==''}>
                             <ion-icon slot="icon-only" name="add"></ion-icon>
