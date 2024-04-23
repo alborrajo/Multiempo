@@ -12,8 +12,8 @@
     let showArchived = false;
 
     onMount(() => {
-        addModal.initialBreakpoint = 0.25;
-        addModal.breakpoints = [0, 0.25];
+        addModal.initialBreakpoint = 1;
+        addModal.breakpoints = [0, 1];
 
         document.onkeydown = fabOnKeyDown;
     });
@@ -149,7 +149,7 @@
     </ion-content>
     
     <!-- Add modal -->
-    <ion-modal bind:this="{addModal}">
+    <ion-modal id="add-modal" bind:this="{addModal}">
         <ion-header>
             <ion-toolbar>
                 <ion-title>Add Timer</ion-title>
@@ -175,5 +175,9 @@
 <style>
 .archive-header {
     --background: #FDC35B;
+}
+
+#add-modal {
+    --height: 112px;
 }
 </style>
