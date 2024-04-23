@@ -25,7 +25,7 @@
     let formattedTime: string;
     $: {
         const duration = dayjs.duration(timer.time, "seconds");
-        formattedTime = duration.asHours().toFixed().padStart(2, '0') + duration.format(":mm:ss");
+        formattedTime = Math.floor(duration.asHours()).toFixed().padStart(2, '0') + duration.format(":mm:ss");
     }
 
     $: if(!$mute && timer.time > 0) {
