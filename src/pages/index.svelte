@@ -5,7 +5,7 @@
     import { alertController } from "@ionic/core";
     import { mute } from "@store/settings";
     
-    let fabAdd: HTMLIonFabElement;
+    let fabAdd: HTMLIonButtonElement;
     let addModal: HTMLIonModalElement;
     let addModalInput: HTMLIonInputElement;
     
@@ -33,7 +33,7 @@
     }
 
     function fabOnKeyDown(event: KeyboardEvent) {
-        if (fabAdd?.checkVisibility() && event.ctrlKey && event.key == "a") {
+        if (!showArchived && event.ctrlKey && event.key == "a") {
             openAddModal();
             event.preventDefault();
         }
@@ -137,15 +137,32 @@
     </ion-header>
     
     <ion-content>
-        <TimerList showArchived={showArchived} />
-        
-        {#if !showArchived}
-            <ion-fab vertical="bottom" horizontal="end" slot="fixed" title="Add new timer (Ctrl+A)" aria-keyshortcuts="Control+A" on:click={openAddModal} bind:this={fabAdd}>
-                <ion-fab-button>
-                    <ion-icon name="add" />
-                </ion-fab-button>
-            </ion-fab>
-        {/if}
+        <ion-list>
+            <div class="timer-list">
+                <TimerList showArchived={showArchived} />
+            </div>
+
+            {#if !showArchived}
+                <ion-item id="add-timer-list-item">
+                    <ion-avatar slot="end">
+                        <ion-button
+                            title="Add new timer (Ctrl+A)" 
+                            aria-keyshortcuts="Control+A"
+                            color="primary"
+                            shape="round"
+                            size="small"
+                            bind:this={fabAdd}
+                            on:click={openAddModal}
+                        >
+                            <ion-icon name="add" />
+                        </ion-button>
+                    </ion-avatar>
+                    <ion-label>
+                        <h2 class="ion-text-wrap semibold">Add Timer</h2>
+                    </ion-label>
+                </ion-item>
+            {/if}
+        </ion-list>
     </ion-content>
     
     <!-- Add modal -->
@@ -175,6 +192,16 @@
 <style>
 .archive-header {
     --background: #FDC35B;
+}
+
+.timer-list {
+    padding-bottom: 0;
+    backdrop-filter: blur(1.5px);
+    background-color: rgb(255,255,255,0.4);
+}
+
+#add-timer-list-item {
+    text-align: end;
 }
 
 #add-modal {
