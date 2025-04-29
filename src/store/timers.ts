@@ -54,6 +54,7 @@ export async function loadState(): Promise<void> {
         if (isPlatform("android")) {
             setRunning(timer, timer._running);
         } else {
+            timer._lastTickTime = null;
             setRunning(timer, false);
         }
     }
@@ -82,7 +83,6 @@ export function setRunning(timer: TimerEntity, running: boolean) {
 
 export function play(timer: TimerEntity) {
     timer._running = true;
-    timer._lastTickTime = Date.now();
     _intervalIds.set(timer, setInterval(() => tick(timer), 1000));
     tick(timer);
 }
