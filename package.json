@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@capacitor/assets": "^2.0.4",
+    "@capacitor/cli": "^7.0.0",
     "@roxi/routify": "^2.18.0",
     "@sveltejs/vite-plugin-svelte": "*",
     "@tsconfig/svelte": "^1.0.13",
@@ -44,11 +45,10 @@
   "dependencies": {
     "@capacitor-community/electron": "^4.1.0",
     "@capacitor-community/tauri": "^1.0.0-alpha.12",
-    "@capacitor/android": "^3.0.1",
-    "@capacitor/cli": "^3.0.0",
-    "@capacitor/core": "^3.0.0",
-    "@capacitor/ios": "^3.0.1",
-    "@capacitor/storage": "^1.2.4",
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/preferences": "^7.0.1",
     "@ionic/core": "^7.0.2",
     "@tauri-apps/api": "^1.4.0",
     "dayjs": "^1.10.7"

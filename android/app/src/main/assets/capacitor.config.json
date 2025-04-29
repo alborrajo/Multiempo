@@ -1,7 +1,6 @@
 {
 	"appId": "alborrajo.multiempo",
 	"appName": "Multiempo",
-	"bundledWebRuntime": false,
 	"npmClient": "npm",
 	"webDir": "public",
 	"plugins": {

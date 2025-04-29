@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import type { TimerEntity } from "@entities/TimerEntity";
 import { isPlatform } from "@ionic/core";
 
@@ -40,7 +40,7 @@ export function removeAllTimers(): Promise<void> {
 }
 
 export async function saveState(): Promise<void> {
-    await Storage.set({
+    await Preferences.set({
         key: STORAGE_TIMERS_KEY,
         value: JSON.stringify(_timers)
     });
@@ -48,10 +48,10 @@ export async function saveState(): Promise<void> {
 }
 
 export async function loadState(): Promise<void> {
-    _timers = (JSON.parse((await Storage.get({key: STORAGE_TIMERS_KEY})).value) ?? []).filter(timer => timer != null);
+    _timers = (JSON.parse((await Preferences.get({key: STORAGE_TIMERS_KEY})).value) ?? []).filter(timer => timer != null);
     for (const timer of _timers) {
         // Don't keep counting when the app is closed on PC
-        if (isPlatform("mobile")) {
+        if (isPlatform("android")) {
             setRunning(timer, timer._running);
         } else {
             setRunning(timer, false);
@@ -62,12 +62,12 @@ export async function loadState(): Promise<void> {
 
 export async function exportRawState(): Promise<string> {
     console.log("Exporting raw state");
-    return (await Storage.get({key: STORAGE_TIMERS_KEY})).value;
+    return (await Preferences.get({key: STORAGE_TIMERS_KEY})).value;
 }
 
 export async function importRawState(rawState: string): Promise<void> {
     console.log("Importing raw state");
-    await Storage.set({key: STORAGE_TIMERS_KEY, value: rawState});
+    await Preferences.set({key: STORAGE_TIMERS_KEY, value: rawState});
     return await loadState();
 }
 

@@ -7,6 +7,10 @@ This app was designed with to measure the time it takes to fulfill multiple task
 
 Project built with the [svelte-ionic-starter](https://github.com/Zettexe/svelte-ionic-starter) template
 
+## Requirements
+
+- NodeJS 20 LTS
+
 ## Building
 
 - Clone the repo

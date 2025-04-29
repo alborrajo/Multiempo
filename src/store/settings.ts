@@ -1,4 +1,4 @@
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { writable } from "svelte/store";
 
 const STORAGE_MUTE_KEY = "mute";
@@ -13,7 +13,7 @@ export const mute = writable(_mute);
 // Apply change and save back to storage when the value is updated
 mute.subscribe(muteValue => {
     if(settingsLoaded) {
-        Storage.set({ key: STORAGE_MUTE_KEY, value: String(muteValue) })
+        Preferences.set({ key: STORAGE_MUTE_KEY, value: String(muteValue) })
     }
 });
 
@@ -25,19 +25,19 @@ export const customBgUrl = writable(_customBgUrl);
 customBgUrl.subscribe(customBgUrlValue => {
     document.documentElement.style.setProperty('--multiempo-background-image-url', `url(${customBgUrlValue})`)
     if(settingsLoaded) {
-        Storage.set({ key: STORAGE_BGURL_KEY, value: customBgUrlValue });
+        Preferences.set({ key: STORAGE_BGURL_KEY, value: customBgUrlValue });
     }
 });
 
 
 // Load settings from storage
-const muteLoaded = Storage.get({ key: STORAGE_MUTE_KEY }).then(result => {
+const muteLoaded = Preferences.get({ key: STORAGE_MUTE_KEY }).then(result => {
     if (result.value != null) {
         mute.set(result.value === "true");
     }
 });
 
-const bgUrlLoaded = Storage.get({ key: STORAGE_BGURL_KEY }).then(result => {
+const bgUrlLoaded = Preferences.get({ key: STORAGE_BGURL_KEY }).then(result => {
     if (result.value != null) {
         customBgUrl.set(result.value);
     }
